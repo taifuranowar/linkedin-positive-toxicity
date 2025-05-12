@@ -267,8 +267,6 @@ def save_posts_to_file(posts, filename=None):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Scrape LinkedIn posts text')
-    parser.add_argument('--username', '-u', type=str, help='LinkedIn username/email', default=None)
-    parser.add_argument('--password', '-p', type=str, help='LinkedIn password', default=None)
     parser.add_argument('--search', '-s', type=str, help='Search query to find specific posts', default=None)
     parser.add_argument('--max', '-m', type=int, help='Maximum number of posts to scrape', default=50)
     parser.add_argument('--delay', '-d', type=int, help='Delay between scrolls in seconds', default=2)
@@ -277,15 +275,10 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
     
-    # Security warning for password in command line
-    if args.password:
-        print("WARNING: Supplying passwords via command line arguments is not secure!")
-        print("         Consider using environment variables instead.")
-    
     # Run the scraper
     posts = scrape_linkedin_posts(
-        email=args.username,
-        password=args.password,
+        email=None,
+        password=None,
         search_query=args.search,
         max_posts=args.max,
         scroll_delay=args.delay,
