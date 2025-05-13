@@ -71,7 +71,8 @@ def init_database(db_path):
         text TEXT NOT NULL,
         post_url TEXT,
         hashtags TEXT,
-        search_query TEXT
+        search_query TEXT,
+        reasons TEXT
     )
     ''')
     
@@ -283,7 +284,8 @@ def save_posts_to_db(conn, posts, search_query):
                 'profile_headline': None,
                 'post_url': None,
                 'hashtags': extract_hashtags(post_text),
-                'search_query': search_query
+                'search_query': search_query,
+                'reasons': None
             }
         
         # Check if post already exists in database
@@ -297,8 +299,8 @@ def save_posts_to_db(conn, posts, search_query):
         try:
             cursor.execute('''
             INSERT INTO linkedin_posts 
-            (post_id, severity, post_date, post_author, profile_headline, text, post_url, hashtags, search_query)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (post_id, severity, post_date, post_author, profile_headline, text, post_url, hashtags, search_query, reasons)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', (
                 post.get('post_id', str(uuid.uuid4())),
                 post.get('severity'),
@@ -308,7 +310,8 @@ def save_posts_to_db(conn, posts, search_query):
                 post.get('text'),
                 post.get('post_url'),
                 post.get('hashtags'),
-                post.get('search_query', search_query)
+                post.get('search_query', search_query),
+                post.get('reasons')
             ))
             saved_count += 1
         except sqlite3.IntegrityError:
@@ -580,7 +583,8 @@ def scrape_linkedin_posts(db_conn, email=None, password=None, search_query=None,
                                 'text': post_text,
                                 'post_url': post_url,
                                 'hashtags': extract_hashtags(post_text),
-                                'search_query': search_query
+                                'search_query': search_query,
+                                'reasons': None
                             }
                             
                             new_posts.append(post_data)
